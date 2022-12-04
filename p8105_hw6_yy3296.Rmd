@@ -157,3 +157,30 @@ Each_citylog %>%
     y = "Odds Ratio"
   )
 ```
+
+# Problem 3
+
+I import the data
+
+```{r}
+birthweight = read_csv("./data/birthweight.csv")
+```
+
+I clean the data for regression analysis including converting numeric to factor where appropriate, checking for missing data, etc
+.
+```{r}
+birthweight_clean = 
+  birthweight %>%
+  janitor::clean_names() %>%
+  mutate(
+    babysex = as.factor(babysex),
+    babysex = fct_recode(babysex, "male" = "1", "female" = "2"),
+    frace = as.factor(frace),
+    frace = fct_recode(frace, "white" = "1", "black" = "2", "asian" = "3", 
+                       "puerto rican" = "4", "other" = "8"),
+    malform = as.logical(malform),
+    mrace = as.factor(mrace),
+    mrace = fct_recode(mrace, "white" = "1", "black" = "2", "asian" = "3", 
+                       "puerto rican" = "4")) %>% 
+  drop_na()
+```
