@@ -142,3 +142,18 @@ Each_citylog =
   select(city_state, term, OR, ci_lower, ci_upper)
 ```
 
+I create a plot that shows the estimated ORs and CIs for each city. Organize cities according to estimated OR, and comment on the plot.
+
+```{r}
+Each_citylog %>% 
+  mutate(city_state = fct_reorder(city_state, OR)) %>% 
+  ggplot(aes(x = city_state, y = OR)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "The Estimated ORs And CIs For Each City",
+    x = "City, State",
+    y = "Odds Ratio"
+  )
+```
