@@ -209,3 +209,13 @@ birthweight_clean %>%
     y = "Residuals"
   )
 ```
+
+Compare the model to two others:
+  
+One using length at birth and gestational age as predictors (main effects only)
+One using head circumference, length, sex, and all interactions (including the three-way interaction) between these
+
+```{r}
+bw_regmodel_1 = lm(bwt ~ blength + gaweeks, data = birthweight_clean)
+bw_regmodel_2 = lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex + bhead * blength * babysex, data = birthweight_clean)
+```
