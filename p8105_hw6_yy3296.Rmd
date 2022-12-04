@@ -184,3 +184,12 @@ birthweight_clean =
                        "puerto rican" = "4")) %>% 
   drop_na()
 ```
+
+Firstly, I propose a regression model for birthweight based on some factors I guess will relavant to birthweight.
+
+```{r}
+bw_reg_guess = lm(bwt ~ bhead + blength + momage + fincome + smoken, data = birthweight_clean) 
+summary(bw_reg_guess)
+```
+
+By the result, we can see all these five factor are relavent for birthweight since the significance level is less than 0.001. 
