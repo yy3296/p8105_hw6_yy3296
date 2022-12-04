@@ -219,3 +219,39 @@ One using head circumference, length, sex, and all interactions (including the t
 bw_regmodel_1 = lm(bwt ~ blength + gaweeks, data = birthweight_clean)
 bw_regmodel_2 = lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex + bhead * blength * babysex, data = birthweight_clean)
 ```
+
+Make this comparison in terms of the cross-validated prediction error; use crossv_mc and functions in purrr as appropriate.
+
+```{r}
+cross_validated_clean = 
+  birthweight_clean %>% 
+  crossv_mc(100) %>% 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  ) %>%
+  mutate(
+    model_reg_guess = map(.x = train, ~lm(bwt ~ bhead + blength + momage + fincome + smoken, data = .x)),
+    model_reg1 = map(.x = train, ~lm(bwt ~ blength + gaweeks, data = .x)),
+    model_reg2 = map(.x = train, ~lm(bwt ~ bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex + bhead * blength * babysex, data = .x))
+  ) %>%
+  mutate(
+    rmse_regguess = map2_dbl(.x = model_reg_guess, test, ~rmse(model = .x, data = .y)),
+    rmse_reg1 = map2_dbl(.x = model_reg1, test, ~rmse(model = .x, data = .y)),
+    rmse_reg2 = map2_dbl(.x = model_reg2, test, ~rmse(model = .x, data = .y))
+  )
+```
+
+```{r}
+cross_validated_clean %>% 
+  select(starts_with("rmse")) %>% 
+  pivot_longer(
+    everything(),
+    names_to = "model", 
+    values_to = "rmse",
+    names_prefix = "rmse_") %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = model, y = rmse)) + geom_violin()
+```
+
+By the plot, we can see my model is great since it in the lowest position. 
